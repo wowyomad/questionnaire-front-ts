@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { QuestionsTableComponent } from '../components/QuestionsTable';
-import { api } from '../services/api'; 
+import { api } from '../services/api';
 import { Question } from '../types/Question';
 import QuestionModal from '../components/QuestionModal';
 
@@ -57,17 +57,26 @@ const FieldsPage: React.FC = () => {
 
   const handleSubmitQuestion = async (question: Question) => {
     try {
+      let updatedQuestion: Question | undefined = undefined;
+      let addedQuestion: Question | undefined = undefined;
+
       if (modalMode === 'add') {
-        await api.addQuestion(question);
+        addedQuestion = await api.addQuestion(question);
       } else if (modalMode === 'edit' && editQuestion) {
-        await api.updateQuestion(editQuestion.id!, question);
+        updatedQuestion = await api.updateQuestion(editQuestion.id!, question);
       }
 
-      // Update questions after adding/editing
-      const updatedQuestions = await api.getQuestions();
-      setQuestions(updatedQuestions);
+      if(addedQuestion) {
+        setQuestions([...questions, addedQuestion])
+        handleCloseModal();
+      }
+      else if (updatedQuestion) {
+        const updatedQuestions = questions.map(q => q.id === updatedQuestion!.id ? updatedQuestion! : q);
+        setQuestions(updatedQuestions);
+        handleCloseModal();
+      }
 
-      handleCloseModal();
+
     } catch (error) {
       console.error('Error saving question:', error);
     }

@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import FieldsPage from '../pages/FieldsPage'; 
 import ResponsesPage from '../pages/ResponsesPage'; 
 import logo from '../assets/bonk.png';
+import { MainPage } from '../pages/MainPage';
 
 const App: React.FC = () => {
   return (
@@ -28,7 +29,6 @@ const NavigationBar: React.FC = () => {
           alt="Logo"
         />
       </Navbar.Brand>
-      <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse className="justify-content-center">
         <Nav className="ml-auto">
           <Nav.Link as={Link} to="/fields" className="btn btn-outline-secondary mx-2">Fields</Nav.Link>
@@ -55,12 +55,4 @@ const PageContent: React.FC = () => {
   );
 };
 
-const MainPage: React.FC = () => {
-  return (
-    <div className="container mt-4">
-      <h1>Main Page</h1>
-    </div>
-  );
-};
-
-export {App}
+export {App};

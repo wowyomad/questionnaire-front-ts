@@ -60,7 +60,7 @@ const QuestionModal: React.FC<QuestionModalProps> = ({ show, onClose, onSubmit, 
     };
 
     const addOption = () => {
-        const updatedOptions = [...formData.options!, { text: '' }];
+        const updatedOptions = [...formData.options!, { text: ''}];
         setFormData(prevState => ({
             ...prevState,
             options: updatedOptions,
@@ -102,6 +102,10 @@ const QuestionModal: React.FC<QuestionModalProps> = ({ show, onClose, onSubmit, 
         }
 
         setOptionsError('');
+
+        formData.options?.forEach((option, index) => {
+            option.index = index;
+        })
 
         onSubmit(formData);
         onClose();

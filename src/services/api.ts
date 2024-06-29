@@ -21,7 +21,7 @@ export async function getQuestions(): Promise<Question[]> {
   }
 }
 
-export async function addQuestion(newQuestion: Question): Promise<void> {
+export async function addQuestion(newQuestion: Question): Promise<Question> {
   try {
     const response = await fetch(`${API_BASE_URL}/questions`, {
       method: 'POST',
@@ -35,14 +35,16 @@ export async function addQuestion(newQuestion: Question): Promise<void> {
       throw new Error(`Failed to add question. Status: ${response.status}`);
     }
 
-    console.log('Question added successfully.');
+    const addedQuestion: Question = await response.json();
+    console.log('Question added successfully:', addedQuestion);
+    return addedQuestion;
   } catch (error) {
     console.error('Error adding question:', error);
     throw error;
   }
 }
 
-export async function updateQuestion(questionId: number, updatedQuestion: Question): Promise<void> {
+export async function updateQuestion(questionId: number, updatedQuestion: Question): Promise<Question> {
   try {
     const response = await fetch(`${API_BASE_URL}/questions/${questionId}`, {
       method: 'PUT',
@@ -56,7 +58,9 @@ export async function updateQuestion(questionId: number, updatedQuestion: Questi
       throw new Error(`Failed to update question. Status: ${response.status}`);
     }
 
-    console.log(`Question ${updatedQuestion.id} updated successfully.`);
+    const updatedQuestionData: Question = await response.json();
+    console.log(`Question ${updatedQuestionData.id} updated successfully.`);
+    return updatedQuestionData;
   } catch (error) {
     console.error(`Error updating question ${updatedQuestion.id}:`, error);
     throw error;
@@ -81,8 +85,8 @@ export async function deleteQuestion(questionId: number): Promise<void> {
 }
 
 export const api = {
-    getQuestions,
-    addQuestion,
-    updateQuestion,
-    deleteQuestion,
-  };
+  getQuestions,
+  addQuestion,
+  updateQuestion,
+  deleteQuestion,
+};
