@@ -1,4 +1,6 @@
 import { Question } from '../types/Question';
+import { Submission } from '../types/Submission';
+
 
 const API_BASE_URL: string = 'http://localhost:8080';
 
@@ -84,9 +86,64 @@ export async function deleteQuestion(questionId: number): Promise<void> {
   }
 }
 
+
+
+export async function getSubmissions(): Promise<Submission[]> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/submissions`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch submissions. Status: ${response.status}`);
+    }
+    const data: Submission[] = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching submissions:', error);
+    throw error;
+  }
+}
+
+export async function addSubmission(submission: Submission): Promise<Submission> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/submissions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(submission),
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to add submission. Status: ${response.status}`);
+    }
+    const addedSubmission: Submission = await response.json();
+    return addedSubmission;
+  } catch (error) {
+    console.error('Error adding submission:', error);
+    throw error;
+  }
+}
+
+export async function deleteSubmission(id: number): Promise<void> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/submissions/${id}`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to delete submission ${id}. Status: ${response.status}`);
+    }
+  } catch (error) {
+    console.error(`Error deleting submission ${id}:`, error);
+    throw error;
+  }
+}
+
+
+
 export const api = {
   getQuestions,
   addQuestion,
   updateQuestion,
   deleteQuestion,
+  getSubmissions,
+  addSubmission,
+  deleteSubmission
 };

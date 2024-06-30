@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import FieldsPage from '../pages/FieldsPage'; 
 import ResponsesPage from '../pages/ResponsesPage'; 
 import logo from '../assets/bonk.png';
-import { MainPage } from '../pages/MainPage';
+import { SubmissionPage } from '../pages/SubmissionPage';
 
 const App: React.FC = () => {
   return (
@@ -50,7 +50,7 @@ const PageContent: React.FC = () => {
     <Routes>
       <Route path="/fields" element={<FieldsPage/>}/>
       <Route path="/responses" element={<ResponsesPage/>}/>
-      <Route path="/" element={<MainPage/>}/>
+      <Route path="/" element={<SubmissionPage/>}/>
     </Routes>
   );
 };

@@ -108,6 +108,7 @@ const QuestionModal: React.FC<QuestionModalProps> = ({ show, onClose, onSubmit, 
         })
 
         onSubmit(formData);
+        setFormData(initialQuestionState)
         onClose();
     };
 
