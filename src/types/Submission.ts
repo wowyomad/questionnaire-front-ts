@@ -1,7 +1,9 @@
-import { Answer } from './Answer'
+import Answer from './Answer'
 
-export type Submission = {
+interface Submission {
   id: number;
   submissionTime: string;
   answers: Answer[];
 }
+
+export default Submission;

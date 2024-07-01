@@ -1,7 +1,7 @@
-import { Option } from "./Option"
-import { QuestionType } from "./QuestionType"
+import Option from "./Option"
+import QuestionType from "./QuestionType"
 
-export type Question = {
+interface Question {
     id?: number,
     label: string,
     text?: string,
@@ -10,3 +10,5 @@ export type Question = {
     active: boolean,
     required: boolean
 }
+
+export default Question;

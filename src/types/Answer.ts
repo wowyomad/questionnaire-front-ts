@@ -1,9 +1,11 @@
-import { Option } from './Option'; 
+import Option from './Option';
 
-export type Answer = {
+interface Answer {
   id: number;
   questionId: number;
   questionType: string;
   text?: string | null;
   selectedOptions?: Option[] | null;
 }
+
+export default Answer;

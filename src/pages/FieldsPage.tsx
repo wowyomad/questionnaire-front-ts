@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { QuestionsTableComponent } from '../components/QuestionsTable';
 import { api } from '../services/api';
-import { Question } from '../types/Question';
+import Question from '../types/Question';
 import QuestionModal from '../components/QuestionModal';
 
 const FieldsPage: React.FC = () => {

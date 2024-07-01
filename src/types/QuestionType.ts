@@ -1,4 +1,4 @@
-export enum QuestionType {
+enum QuestionType {
     SINGLE_LINE_TEXT = "SINGLE_LINE_TEXT",
     MULTILINE_TEXT = "MULTILINE_TEXT",
     RADIO_BUTTON = "RADIO_BUTTON",
@@ -6,3 +6,4 @@ export enum QuestionType {
     COMBOBOX = "COMBOBOX",
     DATE = "DATE"
 }
+export default QuestionType;
