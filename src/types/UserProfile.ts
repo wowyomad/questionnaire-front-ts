@@ -4,4 +4,4 @@ interface UserProfile {
     lastName: string,
     phone: string,
 }
-export default UserProfile
+export default UserProfile;

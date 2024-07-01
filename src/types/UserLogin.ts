@@ -1,5 +1,5 @@
-type UserSignup = {
+interface UserLogin {
     email: string;
     password: string;
 }
-export default UserSignup;
+export default UserLogin;

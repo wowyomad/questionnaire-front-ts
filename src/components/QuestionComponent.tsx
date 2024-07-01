@@ -1,6 +1,6 @@
 import React from 'react';
-import { Question } from '../types/Question';
-import { Option } from '../types/Option';
+import Question from '../types/Question';
+import Option from '../types/Option';
 import { capitalizeFirstLetter } from '../services/helpers';
 
 type QuestionProps = {

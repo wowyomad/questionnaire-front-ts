@@ -1,7 +1,7 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent, useMemo } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import { Question } from '../types/Question';
-import { QuestionType } from '../types/QuestionType';
+import Question from '../types/Question';
+import QuestionType from '../types/QuestionType';
 
 
 type QuestionModalProps = {
@@ -21,7 +21,7 @@ const QuestionModal: React.FC<QuestionModalProps> = ({ show, onClose, onSubmit, 
         options: [],
         active: true,
         required: false,
-    }), []); 
+    }), []);
 
     const [formData, setFormData] = useState<Question>(initialQuestionState);
     const [labelError, setLabelError] = useState<string>('');
@@ -42,7 +42,7 @@ const QuestionModal: React.FC<QuestionModalProps> = ({ show, onClose, onSubmit, 
             ...prevState,
             [name]: newValue,
         }));
-        
+
         if (name === 'label') {
             setLabelError('');
         }
@@ -60,7 +60,7 @@ const QuestionModal: React.FC<QuestionModalProps> = ({ show, onClose, onSubmit, 
     };
 
     const addOption = () => {
-        const updatedOptions = [...formData.options!, { text: ''}];
+        const updatedOptions = [...formData.options!, { text: '' }];
         setFormData(prevState => ({
             ...prevState,
             options: updatedOptions,

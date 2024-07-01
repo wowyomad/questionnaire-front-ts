@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import ResponsesTable from '../components/ResponsesTable';
 import { getQuestions, getSubmissions, deleteSubmission } from '../services/api'; 
-import { Question } from '../types/Question'; 
-import { Submission } from '../types/Submission';
+import Question from '../types/Question'; 
+import Submission from '../types/Submission';
 
 const ResponsesPage: React.FC = () => {
   const [questions, setQuestions] = useState<Question[]>([]);

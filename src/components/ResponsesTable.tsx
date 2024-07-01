@@ -1,7 +1,7 @@
 import React from 'react';
-import { Question } from '../types/Question';
-import { Submission } from '../types/Submission';
-import { Answer } from '../types/Answer';
+import Question from '../types/Question';
+import Submission from '../types/Submission';
+import Answer from '../types/Answer';
 
 
 const MAX_TABLE_HEADER_LENGTH: number = 40;
