@@ -17,7 +17,7 @@ const ResponsesPage: React.FC = () => {
 
   useEffect(() => {
     setFilteredQuestions(() => questions.filter(question => question.active))
-  })
+  }, [])
 
   const fetchData = async () => {
     try {

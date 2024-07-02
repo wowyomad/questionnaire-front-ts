@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Dropdown, DropdownButton, Nav, Navbar } from 'react-bootstrap';
 import { Link, Route, Routes, useNavigate } from 'react-router-dom';
-import logo from './assets/bonk.png'
+import logo from './assets/bonk.png';
 import ResponsesPage from './pages/ResponsesPage';
 import FieldsPage from './pages/FieldsPage';
 import LoginPage from './pages/LoginPage';
@@ -11,49 +11,47 @@ import persistentStorage from './services/PersitentStorage';
 import AuthenticationResponse from './types/AuthenticationResponse';
 import { api } from './services/api';
 import SuccessPage from './pages/SuccessPage';
-
-
+import NotFoundPage from './pages/NotFoundPage';
+import ProtectedRoute from './components/ProtectedRoute';
 
 const App: React.FC = () => {
-  const [isLoggedIn, setLoggedIn] = useState<boolean>(false)
-  const [email, setEmail] = useState<string>('')
+  const [isLoggedIn, setLoggedIn] = useState<boolean>(false);
+  const [email, setEmail] = useState<string>('');
 
-  useEffect(() => {    
+  useEffect(() => {
     async function fetchUser(): Promise<void> {
-      const id = persistentStorage.getUserId()
+      const id = persistentStorage.getUserId();
       if (id !== undefined) {
-        const user = await api.getUser(id)
-        
-        setEmail(() => user.email)
-        setLoggedIn(() => true)
+        const user = await api.getUser(id);
+
+        setEmail(() => user.email);
+        setLoggedIn(() => true);
       }
     }
-    fetchUser()
-  }, [])
+    fetchUser();
+  }, []);
 
-
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleLogout = () => {
-    setLoggedIn(() => false)
-    setEmail(() => '')
-    persistentStorage.removeToken()
-    persistentStorage.removeUserId()
+    setLoggedIn(() => false);
+    setEmail(() => '');
+    persistentStorage.removeToken();
+    persistentStorage.removeUserId();
   };
 
   const onLoginSuccess = async (auth: AuthenticationResponse) => {
-    persistentStorage.setToken(auth.token)
-    persistentStorage.setUserId(auth.userId)
+    persistentStorage.setToken(auth.token);
+    persistentStorage.setUserId(auth.userId);
 
-    const user = await api.getUser(auth.userId)
-    setEmail(user.email)
-    setLoggedIn(true)
+    const user = await api.getUser(auth.userId);
+    setEmail(user.email);
+    setLoggedIn(true);
 
-    navigate('/submission')
-  }
+    navigate('/submission');
+  };
 
   const onSignupSuccess = onLoginSuccess;
-
 
   return (
     <>
@@ -73,11 +71,11 @@ const App: React.FC = () => {
                 <DropdownButton id="user-dropdown" title={email}>
                   <Dropdown.Item as={Link} to="/edit-profile">Edit Profile</Dropdown.Item>
                   <Dropdown.Item as={Link} to="/reset-password">Reset Password</Dropdown.Item>
-                  <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
+                  <Dropdown.Item onClick={handleLogout} className="btn btn-outline-danger">Logout</Dropdown.Item>
                 </DropdownButton>
               ) : (
                 <>
-                  <Nav.Link as={Link} to="/login">Login</Nav.Link>
+                  <Nav.Link as={Link} to="/login" className="btn btn-outline-primary">Login</Nav.Link>
                 </>
               )}
             </Nav>
@@ -85,25 +83,40 @@ const App: React.FC = () => {
         </Container>
       </Navbar>
 
-
       <Routes>
-        <Route index element={<SubmissionPage/>} />
+        <Route index element={<SubmissionPage />} />
         <Route path="/responses" element={<ResponsesPage />} />
         <Route path="/submission" element={<SubmissionPage />} />
-        <Route path="/success" element={<SuccessPage/>} />
-        {isLoggedIn && (
-          <>
-            <Route path="/fields" element={<FieldsPage />}></Route>
-            <Route path="/edit-profile" element={<div>Edit Profile Private Route</div>} />
-            <Route path="/reset-password" element={<div>Reset Password Private Route</div>} />
-          </>
-        )}
-        {!isLoggedIn && (
-          <>
-            <Route path="/signup" element={<SignupPage onSignupSuccess={onSignupSuccess} />} />
-            <Route path="/login" element={<LoginPage onLoginSuccess={onLoginSuccess} />} />
-          </>
-        )}
+        <Route path="/success" element={<SuccessPage />} />
+        <Route path="/signup" element={<SignupPage onSignupSuccess={onSignupSuccess} />} />
+        <Route path="/login" element={<LoginPage onLoginSuccess={onLoginSuccess} />} />
+        <Route path="/not-found" element={<NotFoundPage />} />
+        <Route path="*" element={<NotFoundPage />} />
+
+        <Route
+          path="/fields"
+          element={
+            <ProtectedRoute isLoggedIn={isLoggedIn}>
+              <FieldsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/edit-profile"
+          element={
+            <ProtectedRoute isLoggedIn={isLoggedIn}>
+              <div>Edit Profile Private Route</div>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/reset-password"
+          element={
+            <ProtectedRoute isLoggedIn={isLoggedIn}>
+              <div>Reset Password Private Route</div>
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </>
   );

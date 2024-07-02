@@ -98,7 +98,7 @@ const TableBody: React.FC<TableBodyProps> = ({ questions, submissions, onDelete 
 
 
 const TableRow: React.FC<TableRowProps> = ({ questions, submission, index, onDelete }) => {
-  const handleDelete = () => onDelete(submission.id)
+  const handleDelete = () => onDelete(submission.id!)
   let answers: Map<number, Answer | undefined> = new Map<number, Answer>();
   questions.forEach(question => {
     let answer: Answer | undefined = submission.answers.find(answer => answer.questionId === question.id)
