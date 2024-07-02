@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Question from '../types/Question';
 import Submission from '../types/Submission';
 import Answer from '../types/Answer';
+import Pagination from './Pagination';
 
 
 const MAX_TABLE_HEADER_LENGTH: number = 40;
@@ -39,13 +40,25 @@ const ResponsesTable: React.FC<ResponsesTableProps> = ({
   submissions,
   onDelete,
 }) => {
+  const [currentPage, setCurrentPage] = useState<number>(0);
+  const itemsPerPage = 8;
+  const totalPages = Math.ceil(submissions.length / itemsPerPage);
 
+  const startIndex = currentPage * itemsPerPage;
+  const currentSubmissions = submissions.slice(startIndex, startIndex + itemsPerPage);
   return (
-    <div className="table-responsive">
-      <table className='table table-hover'>
-        <TableHeaders questions={questions} />
-        <TableBody questions={questions} submissions={submissions} onDelete={onDelete} />
-      </table>
+    <div>
+      <div className="table-responsive">
+        <table className='table table-hover'>
+          <TableHeaders questions={questions} />
+          <TableBody questions={questions} submissions={currentSubmissions} onDelete={onDelete} />
+        </table>
+      </div>
+      <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
     </div>
 
   );
@@ -98,8 +111,9 @@ const TableRow: React.FC<TableRowProps> = ({ questions, submission, index, onDel
       </td>
       <td className='text-center'>{index}</td>
       <td className='text-center'>{submission.submissionTime}</td>
+      {/*Danger key!!!*/}
       {questions.map(question => (
-        <AnswerCell answer={answers.get(question.id!)}/>
+        <AnswerCell key={question.id} answer={answers.get(question.id!)} />
       ))}
     </tr>
   )
@@ -108,19 +122,18 @@ const TableRow: React.FC<TableRowProps> = ({ questions, submission, index, onDel
 const AnswerCell: React.FC<AnswerCellProps> = ({ answer }) => {
 
 
-  if(answer?.text?.length ?? 0 > 0) {
+  if (answer?.text?.length ?? 0 > 0) {
     return (<td className='text-center'>{answer!.text}</td>)
   }
-
-  if(answer?.selectedOptions?.length ?? 0 > 0) {
+  if (answer?.selectedOptions?.length ?? 0 > 0) {
     let selectedOptions = answer!.selectedOptions!
     selectedOptions.sort((a, b) => a.index! - b.index!)
     return (
       <td >
         <ul>
           {selectedOptions.map((option) => (
-            <li key={option.index}>
-              {answer!.selectedOptions!.length > 1 ? `${option.index! + 1}. ${option.text}` : option.text}
+            <li key={option.id}>
+              {answer?.questionType ==='CHECKBOX' ? `${option.index! + 1}. ${option.text}` : option.text}
             </li>
           ))}
         </ul>

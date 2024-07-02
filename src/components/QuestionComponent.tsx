@@ -39,9 +39,6 @@ export const QuestionComponent: React.FC<QuestionProps> = ({ question, index, on
         <button className="btn btn-sm btn-outline-danger mx-1 " onClick={handleDelete}>
           Delete
         </button>
-        <button className='btn btn-sm btn-dark mx-3'>
-          Test
-        </button>
       </td>
     </tr>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { QuestionsTableComponent } from '../components/QuestionsTable';
+import { FieldsTableComponent } from '../components/FieldsTable';
 import { api } from '../services/api';
 import Question from '../types/Question';
 import QuestionModal from '../components/QuestionModal';
@@ -91,7 +91,7 @@ const FieldsPage: React.FC = () => {
       <button className="btn btn-primary mb-3" onClick={handleAdd}>
         Add Question
       </button>
-      <QuestionsTableComponent questions={questions} onEdit={handleEdit} onDelete={handleDelete} />
+      <FieldsTableComponent questions={questions} onEdit={handleEdit} onDelete={handleDelete} />
 
       <QuestionModal
         show={showModal}

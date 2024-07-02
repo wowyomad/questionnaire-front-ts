@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Question from '../types/Question';
 import { QuestionComponent } from './QuestionComponent';
+import Pagination from './Pagination';
 
 type QuestionsTableProps = {
   questions: Question[];
@@ -8,7 +9,15 @@ type QuestionsTableProps = {
   onDelete: (id: number) => void;
 };
 
-export const QuestionsTableComponent: React.FC<QuestionsTableProps> = ({ questions, onEdit, onDelete }) => {
+export const FieldsTableComponent: React.FC<QuestionsTableProps> = ({ questions, onEdit, onDelete }) => {
+  const [currentPage, setCurrentPage] = useState<number>(0);
+  const itemsPerPage = 8;
+
+  const totalPages = Math.ceil(questions.length / itemsPerPage);
+
+  const startIndex = currentPage * itemsPerPage;
+  const currentQuestions = questions.slice(startIndex, startIndex + itemsPerPage);
+
   return (
     <div className="container mt-4">
       <table className="table table-hover">
@@ -25,10 +34,10 @@ export const QuestionsTableComponent: React.FC<QuestionsTableProps> = ({ questio
           </tr>
         </thead>
         <tbody>
-          {questions.map((question, index) => (
+          {currentQuestions.map((question, index) => (
             <QuestionComponent
               key={question.id}
-              index={index}
+              index={startIndex + index}
               question={question}
               onEdit={onEdit}
               onDelete={onDelete}
@@ -36,6 +45,11 @@ export const QuestionsTableComponent: React.FC<QuestionsTableProps> = ({ questio
           ))}
         </tbody>
       </table>
+      <Pagination 
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 };

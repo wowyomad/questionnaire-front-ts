@@ -1,8 +1,39 @@
-import { Question } from '../types/Question';
-import { Submission } from '../types/Submission';
+import AuthenticationResponse from '../types/AuthenticationResponse';
+import Question from '../types/Question';
+import Submission from '../types/Submission';
+import UserLogin from '../types/UserLogin';
+import User from '../types/UserProfile';
+import UserSignup from '../types/UserSignup';
+import persistentStorage from './PersitentStorage';
 
 
 const API_BASE_URL: string = 'http://localhost:8080';
+
+export async function getUser(userId: number): Promise<User> {
+  console.log('awaiting get user')
+  const token = persistentStorage.getToken();
+  if(!token) {
+    throw new Error('No token')
+  }
+  try {
+    const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    if(!response.ok) {
+      throw new Error(`Couldn't get user. Status: ${response.status}`);
+    }
+
+    const user = await response.json() as User
+    return user;
+  }  catch (error) {
+    console.error('Error getting user:', error);
+    throw error;
+  }
+
+}
 
 export async function getQuestions(): Promise<Question[]> {
   try {
@@ -24,11 +55,16 @@ export async function getQuestions(): Promise<Question[]> {
 }
 
 export async function addQuestion(newQuestion: Question): Promise<Question> {
+  const token = persistentStorage.getToken();
+  if(!token) {
+    throw new Error('No token')
+  }
   try {
     const response = await fetch(`${API_BASE_URL}/questions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify(newQuestion),
     });
@@ -47,11 +83,16 @@ export async function addQuestion(newQuestion: Question): Promise<Question> {
 }
 
 export async function updateQuestion(questionId: number, updatedQuestion: Question): Promise<Question> {
+  const token = persistentStorage.getToken();
+  if(!token) {
+    throw new Error('No token')
+  }
   try {
     const response = await fetch(`${API_BASE_URL}/questions/${questionId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify(updatedQuestion),
     });
@@ -70,9 +111,16 @@ export async function updateQuestion(questionId: number, updatedQuestion: Questi
 }
 
 export async function deleteQuestion(questionId: number): Promise<void> {
+  const token = persistentStorage.getToken();
+  if(!token) {
+    throw new Error('No token')
+  }
   try {
     const response = await fetch(`${API_BASE_URL}/questions/${questionId}`, {
       method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
     });
 
     if (!response.ok) {
@@ -123,9 +171,16 @@ export async function addSubmission(submission: Submission): Promise<Submission>
 }
 
 export async function deleteSubmission(id: number): Promise<void> {
+  const token = persistentStorage.getToken();
+  if(!token) {
+    throw new Error('No token')
+  }
   try {
     const response = await fetch(`${API_BASE_URL}/submissions/${id}`, {
       method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
     });
     if (!response.ok) {
       throw new Error(`Failed to delete submission ${id}. Status: ${response.status}`);
@@ -136,14 +191,72 @@ export async function deleteSubmission(id: number): Promise<void> {
   }
 }
 
+export async function login(credentials: UserLogin): Promise<AuthenticationResponse> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/auth/authenticate`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(credentials)
+    });
+    if(!response.ok) {
+      if(response.status === 500) {
+        throw new Error('Failed to login. Bad credentials')
+      }
+      throw new Error(`Failed to login. Status: ${response.status}`)
+    } 
+    const json = await response.json();
+    if (!json.token || !json.userId) {
+      throw new Error(`Invalid response format`);
+  }
+    return json as AuthenticationResponse;
+
+  } catch(error) {
+    console.error(`Error logging in.`, error)
+    throw error;
+  }
+}
+
+export async function signup(credentials: UserSignup): Promise<AuthenticationResponse> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/auth/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(credentials)
+    });
+    if(!response.ok) {
+      if(response.status === 409) {
+        throw new Error('Email is already in use')
+
+      }
+      throw new Error(`Failed to sign up. Status: ${response.status}`)
+    } 
+    const json = await response.json();
+    if (!json.token || !json.userId) {
+      throw new Error(`Invalid response format. Expected ${AuthenticatorResponse}, Received: ${json} `);
+  }
+    return json as AuthenticationResponse;
+
+  } catch(error) {
+    console.error(`Error signing up.`, error)
+    throw error;
+  }
+}
+
 
 
 export const api = {
+  getUser,
   getQuestions,
   addQuestion,
   updateQuestion,
   deleteQuestion,
   getSubmissions,
   addSubmission,
-  deleteSubmission
+  deleteSubmission,
+  signup,
+  login
 };
