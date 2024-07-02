@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { api } from "../services/api";
 import Question from "../types/Question";
 import SubmissionForm from "../components/SubmissionForm";
-import QuestionType from "../types/QuestionType";
 import { useNavigate } from "react-router-dom";
 
 function SubmissionPage() {
