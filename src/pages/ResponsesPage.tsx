@@ -12,12 +12,10 @@ const ResponsesPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log('fetching');
     fetchData();
   }, []);
 
   useEffect(() => {
-    console.log('filtering questions');
     const filtered = questions.filter(q => q.active)
     setActiveQuestions(() => filtered)
   }, [questions])
