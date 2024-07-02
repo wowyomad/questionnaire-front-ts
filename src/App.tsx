@@ -38,6 +38,7 @@ const App: React.FC = () => {
     setEmail(() => '');
     persistentStorage.removeToken();
     persistentStorage.removeUserId();
+    navigate('/submission')
   };
 
   const onLoginSuccess = async (auth: AuthenticationResponse) => {

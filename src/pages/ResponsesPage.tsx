@@ -6,18 +6,21 @@ import Submission from '../types/Submission';
 
 const ResponsesPage: React.FC = () => {
   const [questions, setQuestions] = useState<Question[]>([]);
-  const [activeQuestions, setFilteredQuestions] = useState<Question[]>([]) 
+  const [activeQuestions, setActiveQuestions] = useState<Question[]>([]) 
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log('fetching');
     fetchData();
   }, []);
 
   useEffect(() => {
-    setFilteredQuestions(() => questions.filter(question => question.active))
-  }, [])
+    console.log('filtering questions');
+    const filtered = questions.filter(q => q.active)
+    setActiveQuestions(() => filtered)
+  }, [questions])
 
   const fetchData = async () => {
     try {
