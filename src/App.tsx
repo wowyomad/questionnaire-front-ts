@@ -14,9 +14,19 @@ import SuccessPage from './pages/SuccessPage';
 import NotFoundPage from './pages/NotFoundPage';
 import ProtectedRoute from './components/ProtectedRoute';
 
+import './App.css'
+
 const App: React.FC = () => {
   const [isLoggedIn, setLoggedIn] = useState<boolean>(false);
   const [email, setEmail] = useState<string>('');
+
+  const [show, setShow] = useState(false);
+  const showDropdown = () => {
+    setShow(true);
+  }
+  const hideDropdown = () => {
+    setShow(false);
+  }
 
   useEffect(() => {
     async function fetchUser(): Promise<void> {
@@ -69,7 +79,13 @@ const App: React.FC = () => {
             </Nav>
             <Nav>
               {isLoggedIn ? (
-                <DropdownButton id="user-dropdown" title={email}>
+                <DropdownButton
+                  id="user-dropdown"
+                  title={email}
+                  show={show}
+                  onMouseEnter={showDropdown}
+                  onMouseLeave={hideDropdown}
+                >
                   <Dropdown.Item as={Link} to="/edit-profile">Edit Profile</Dropdown.Item>
                   <Dropdown.Item as={Link} to="/reset-password">Reset Password</Dropdown.Item>
                   <Dropdown.Item onClick={handleLogout} className="btn btn-outline-danger">Logout</Dropdown.Item>
