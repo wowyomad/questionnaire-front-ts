@@ -6,26 +6,31 @@ import Submission from '../types/Submission';
 
 const ResponsesPage: React.FC = () => {
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [activeQuestions, setFilteredQuestions] = useState<Question[]>([]) 
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const questionsData = await getQuestions(); 
-        const submissionsData = await getSubmissions();
-        setQuestions(questionsData);
-        setSubmissions(submissionsData);
-      } catch (error) {
-        setError('Failed to fetch data');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchData();
   }, []);
+
+  useEffect(() => {
+    setFilteredQuestions(() => questions.filter(question => question.active))
+  })
+
+  const fetchData = async () => {
+    try {
+      const questionsData = await getQuestions(); 
+      const submissionsData = await getSubmissions();
+      setQuestions(questionsData);
+      setSubmissions(submissionsData);
+    } catch (error) {
+      setError('Failed to fetch data');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleDelete = async (id: number) => {
     try {
@@ -43,7 +48,7 @@ const ResponsesPage: React.FC = () => {
     <div className="container mt-4">
       <h1>Responses</h1>
       <ResponsesTable
-        questions={questions}
+        questions={activeQuestions}
         submissions={submissions}
         onDelete={handleDelete}
       />

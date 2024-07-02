@@ -1,8 +1,8 @@
 import Answer from './Answer'
 
 interface Submission {
-  id: number;
-  submissionTime: string;
+  id?: number;
+  submissionTime?: string;
   answers: Answer[];
 }
 

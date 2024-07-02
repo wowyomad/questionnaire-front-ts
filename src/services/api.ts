@@ -1,3 +1,4 @@
+import Answer from '../types/Answer';
 import AuthenticationResponse from '../types/AuthenticationResponse';
 import Question from '../types/Question';
 import Submission from '../types/Submission';
@@ -12,7 +13,7 @@ const API_BASE_URL: string = 'http://localhost:8080';
 export async function getUser(userId: number): Promise<User> {
   console.log('awaiting get user')
   const token = persistentStorage.getToken();
-  if(!token) {
+  if (!token) {
     throw new Error('No token')
   }
   try {
@@ -22,13 +23,13 @@ export async function getUser(userId: number): Promise<User> {
         'Authorization': `Bearer ${token}`
       }
     })
-    if(!response.ok) {
+    if (!response.ok) {
       throw new Error(`Couldn't get user. Status: ${response.status}`);
     }
 
     const user = await response.json() as User
     return user;
-  }  catch (error) {
+  } catch (error) {
     console.error('Error getting user:', error);
     throw error;
   }
@@ -56,7 +57,7 @@ export async function getQuestions(): Promise<Question[]> {
 
 export async function addQuestion(newQuestion: Question): Promise<Question> {
   const token = persistentStorage.getToken();
-  if(!token) {
+  if (!token) {
     throw new Error('No token')
   }
   try {
@@ -84,7 +85,7 @@ export async function addQuestion(newQuestion: Question): Promise<Question> {
 
 export async function updateQuestion(questionId: number, updatedQuestion: Question): Promise<Question> {
   const token = persistentStorage.getToken();
-  if(!token) {
+  if (!token) {
     throw new Error('No token')
   }
   try {
@@ -112,7 +113,7 @@ export async function updateQuestion(questionId: number, updatedQuestion: Questi
 
 export async function deleteQuestion(questionId: number): Promise<void> {
   const token = persistentStorage.getToken();
-  if(!token) {
+  if (!token) {
     throw new Error('No token')
   }
   try {
@@ -172,7 +173,7 @@ export async function addSubmission(submission: Submission): Promise<Submission>
 
 export async function deleteSubmission(id: number): Promise<void> {
   const token = persistentStorage.getToken();
-  if(!token) {
+  if (!token) {
     throw new Error('No token')
   }
   try {
@@ -200,19 +201,19 @@ export async function login(credentials: UserLogin): Promise<AuthenticationRespo
       },
       body: JSON.stringify(credentials)
     });
-    if(!response.ok) {
-      if(response.status === 500) {
+    if (!response.ok) {
+      if (response.status === 500) {
         throw new Error('Failed to login. Bad credentials')
       }
       throw new Error(`Failed to login. Status: ${response.status}`)
-    } 
+    }
     const json = await response.json();
     if (!json.token || !json.userId) {
       throw new Error(`Invalid response format`);
-  }
+    }
     return json as AuthenticationResponse;
 
-  } catch(error) {
+  } catch (error) {
     console.error(`Error logging in.`, error)
     throw error;
   }
@@ -227,21 +228,44 @@ export async function signup(credentials: UserSignup): Promise<AuthenticationRes
       },
       body: JSON.stringify(credentials)
     });
-    if(!response.ok) {
-      if(response.status === 409) {
+    if (!response.ok) {
+      if (response.status === 409) {
         throw new Error('Email is already in use')
 
       }
       throw new Error(`Failed to sign up. Status: ${response.status}`)
-    } 
+    }
     const json = await response.json();
     if (!json.token || !json.userId) {
       throw new Error(`Invalid response format. Expected ${AuthenticatorResponse}, Received: ${json} `);
-  }
+    }
     return json as AuthenticationResponse;
 
-  } catch(error) {
+  } catch (error) {
     console.error(`Error signing up.`, error)
+    throw error;
+  }
+}
+
+export async function submitAnswers(answers: Answer[]): Promise<void> {
+  const submission: Submission = { answers }
+  console.log(JSON.stringify(submission))
+
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/submissions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(submission)
+    }
+    )
+    if(response.status !== 201) {
+        throw new Error (`Submission not accepted. Status: ${response.status}`)
+    }
+  } catch (error) {
+    console.error(`Error submitting.`, error)
     throw error;
   }
 }
@@ -258,5 +282,6 @@ export const api = {
   addSubmission,
   deleteSubmission,
   signup,
-  login
+  login,
+  submitAnswers
 };

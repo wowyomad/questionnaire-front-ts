@@ -2,7 +2,7 @@ interface Option {
     id?: number,
     questionId?: number,
     index?: number,
-    text: string,
+    text?: string,
 }
 
 export default Option;

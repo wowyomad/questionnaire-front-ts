@@ -1,7 +1,7 @@
 import Option from './Option';
 
 interface Answer {
-  id: number;
+  id?: number;
   questionId: number;
   questionType: string;
   text?: string | null;

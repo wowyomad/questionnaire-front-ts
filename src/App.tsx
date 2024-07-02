@@ -10,6 +10,7 @@ import SubmissionPage from './pages/SubmissionPage';
 import persistentStorage from './services/PersitentStorage';
 import AuthenticationResponse from './types/AuthenticationResponse';
 import { api } from './services/api';
+import SuccessPage from './pages/SuccessPage';
 
 
 
@@ -86,9 +87,10 @@ const App: React.FC = () => {
 
 
       <Routes>
-        <Route index element={<div>Submission Route</div>} />
+        <Route index element={<SubmissionPage/>} />
         <Route path="/responses" element={<ResponsesPage />} />
         <Route path="/submission" element={<SubmissionPage />} />
+        <Route path="/success" element={<SuccessPage/>} />
         {isLoggedIn && (
           <>
             <Route path="/fields" element={<FieldsPage />}></Route>
