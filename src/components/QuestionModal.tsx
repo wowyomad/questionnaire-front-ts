@@ -95,7 +95,7 @@ const QuestionModal: React.FC<QuestionModalProps> = ({ show, onClose, onSubmit, 
         }
 
         if ((formData.type === QuestionType.RADIO_BUTTON || formData.type === QuestionType.CHECKBOX || formData.type === QuestionType.COMBOBOX) &&
-            formData.options!.some(option => option.text.trim() === '')
+            formData.options!.some(option => option.text?.trim() === '')
         ) {
             setOptionsError('Options cannot be blank.');
             return;
