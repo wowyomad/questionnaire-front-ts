@@ -1,20 +1,20 @@
-import { useState, useEffect } from 'react';
-
-
 namespace persistentStorage {
     export function setToken(token: string) {
         localStorage.setItem('token', token)
     }
     export function setUserId(userId: number) {
+
         localStorage.setItem('userId', userId.toString())
     }
 
     export function getToken(): string | undefined {
+        
         return localStorage.getItem('token') ?? undefined
     }
 
     export function getUserId(): number | undefined {
         const userIdString = localStorage.getItem('userId');
+        
         if (userIdString) {
             const userIdNumber = parseInt(userIdString, 10);
     

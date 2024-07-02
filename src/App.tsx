@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import {Container, Dropdown, DropdownButton, Nav, Navbar } from 'react-bootstrap';
+import React, { useEffect, useState } from 'react';
+import { Container, Dropdown, DropdownButton, Nav, Navbar } from 'react-bootstrap';
 import { Link, Route, Routes, useNavigate } from 'react-router-dom';
 import logo from './assets/bonk.png'
 import ResponsesPage from './pages/ResponsesPage';
@@ -17,6 +17,20 @@ const App: React.FC = () => {
   const [isLoggedIn, setLoggedIn] = useState<boolean>(false)
   const [email, setEmail] = useState<string>('')
 
+  useEffect(() => {    
+    async function fetchUser(): Promise<void> {
+      const id = persistentStorage.getUserId()
+      if (id !== undefined) {
+        const user = await api.getUser(id)
+        
+        setEmail(() => user.email)
+        setLoggedIn(() => true)
+      }
+    }
+    fetchUser()
+  }, [])
+
+
   const navigate = useNavigate()
 
   const handleLogout = () => {
@@ -27,9 +41,6 @@ const App: React.FC = () => {
   };
 
   const onLoginSuccess = async (auth: AuthenticationResponse) => {
-    console.log(`token: ${auth.token}`)
-    console.log(`id: ${auth.userId}`)
-
     persistentStorage.setToken(auth.token)
     persistentStorage.setUserId(auth.userId)
 
@@ -75,20 +86,20 @@ const App: React.FC = () => {
 
 
       <Routes>
-        <Route index element={<div>Submission Route</div>}/>
-        <Route path="/responses" element={<ResponsesPage/>}/>
-        <Route path="/submission" element={<SubmissionPage/>}/>
+        <Route index element={<div>Submission Route</div>} />
+        <Route path="/responses" element={<ResponsesPage />} />
+        <Route path="/submission" element={<SubmissionPage />} />
         {isLoggedIn && (
           <>
-            <Route path="/fields" element={<FieldsPage/>}></Route>
-            <Route path="/edit-profile" element={<div>Edit Profile Private Route</div>}/>
-            <Route path="/reset-password" element={<div>Reset Password Private Route</div>}/>
+            <Route path="/fields" element={<FieldsPage />}></Route>
+            <Route path="/edit-profile" element={<div>Edit Profile Private Route</div>} />
+            <Route path="/reset-password" element={<div>Reset Password Private Route</div>} />
           </>
         )}
         {!isLoggedIn && (
           <>
-            <Route path="/signup" element={<SignupPage onSignupSuccess={onSignupSuccess}/>}/>
-            <Route path="/login" element={<LoginPage onLoginSuccess={onLoginSuccess}/>}/>
+            <Route path="/signup" element={<SignupPage onSignupSuccess={onSignupSuccess} />} />
+            <Route path="/login" element={<LoginPage onLoginSuccess={onLoginSuccess} />} />
           </>
         )}
       </Routes>
