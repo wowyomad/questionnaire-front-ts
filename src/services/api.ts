@@ -36,6 +36,22 @@ export async function getUser(userId: number): Promise<User> {
 
 }
 
+export async function getSubmissionsCount(): Promise<number> {
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/submissions/count`)
+    if (!response.ok) {
+      throw new Error(`Couldn't fetch submissions count. Status: ${response.status}`);
+    }
+    const count: number = await response.json()
+    return count
+
+  } catch(error) {
+    console.error('Error fetching submissions count:', error);
+    throw error;
+  }
+}
+
 export async function getQuestionsCount(): Promise<number> {
   try {
     const response = await fetch(`${API_BASE_URL}/questions/count`)
@@ -158,8 +174,10 @@ export async function deleteQuestion(questionId: number): Promise<void> {
 
 export async function getSubmissions(offset?: number, limit?: number): Promise<Submission[]> {
   const url = offset && limit
-  ? `${API_BASE_URL}/submissions&offset=${offset}&limit=${limit}`
+  ? `${API_BASE_URL}/submissions?offset=${offset}&limit=${limit}`
   : `${API_BASE_URL}/submissions`
+  console.log(url);
+  
   try {
     const response = await fetch(url);
     if (!response.ok) {
@@ -298,6 +316,7 @@ export const api = {
   getUser,
   getQuestions,
   getQuestionsCount,
+  getSubmissionsCount,
   addQuestion,
   updateQuestion,
   deleteQuestion,

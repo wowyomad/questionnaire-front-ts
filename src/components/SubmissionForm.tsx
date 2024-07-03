@@ -133,6 +133,7 @@ const SubmissionForm: React.FC<SubmissionFormProps> = ({ questions, onSubmission
         return true;
     };
 
+
     return (
         <form onSubmit={handleSubmit}>
             {questions.map((question) => (

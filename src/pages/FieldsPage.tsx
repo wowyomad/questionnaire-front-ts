@@ -36,12 +36,9 @@ const FieldsPage: React.FC = () => {
   const handleQuestionsUpdated = async () => {
     let page: number = currentPage;
     const count = await api.getQuestionsCount(); setTotalQuestions(count)
-    console.log(`count :${count}`);
     if (count !== totalQuestions) {
-      console.log(`count != totalQuestoins`);
       
       const requiredPages = Math.ceil(count / itemsPerPage)
-      console.log(`required pages: ${requiredPages}`);
       
       if (requiredPages <= currentPage) {
         page = currentPage - 1;
@@ -55,12 +52,10 @@ const FieldsPage: React.FC = () => {
 
 
   const fetchQuestions = async (offset: number, limit: number) => {
-    console.log(`current page ${currentPage}`);
 
     setLoading(true);
     try {
       const questions = await api.getQuestions(offset, limit);
-      console.log(`fetched questions with offset ${offset} and limit ${limit}: ${JSON.stringify(questions)}`);
 
       setQuestions(questions);
     } catch (error) {
