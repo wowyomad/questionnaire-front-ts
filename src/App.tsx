@@ -19,6 +19,7 @@ import './App.css'
 const App: React.FC = () => {
   const [isLoggedIn, setLoggedIn] = useState<boolean>(false);
   const [email, setEmail] = useState<string>('');
+  const [isLoading, setLoading] = useState<boolean>(true);
 
   const [show, setShow] = useState(false);
   const showDropdown = () => {
@@ -32,11 +33,15 @@ const App: React.FC = () => {
     async function fetchUser(): Promise<void> {
       const id = persistentStorage.getUserId();
       if (id !== undefined) {
-        const user = await api.getUser(id);
-
-        setEmail(() => user.email);
-        setLoggedIn(() => true);
-      }
+        try {
+          const user = await api.getUser(id);
+          setEmail(user.email);
+          setLoggedIn(true);
+        } catch (error) {
+          console.error('Failed to fetch user:', error);
+        }
+      }      
+      setLoading(false); 
     }
     fetchUser();
   }, []);
@@ -61,8 +66,9 @@ const App: React.FC = () => {
 
     navigate('/submission');
   };
-
   const onSignupSuccess = onLoginSuccess;
+
+  if (isLoading) return <div>Loading...</div>;
 
   return (
     <>

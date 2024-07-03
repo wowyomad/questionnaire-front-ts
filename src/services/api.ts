@@ -36,9 +36,28 @@ export async function getUser(userId: number): Promise<User> {
 
 }
 
-export async function getQuestions(): Promise<Question[]> {
+export async function getQuestionsCount(): Promise<number> {
   try {
-    const response = await fetch(`${API_BASE_URL}/questions`, {
+    const response = await fetch(`${API_BASE_URL}/questions/count`)
+    if (!response.ok) {
+      throw new Error(`Couldn't fetch questions count. Status: ${response.status}`);
+    }
+    const count: number = await response.json()
+    return count
+
+  } catch(error) {
+    console.error('Error fetching questions count:', error);
+    throw error;
+  }
+}
+
+export async function getQuestions(offset?: number, limit?: number): Promise<Question[]> {
+  try {
+    const url = offset !== undefined && limit !== undefined
+     ? `${API_BASE_URL}/questions?offset=${offset}&limit=${limit}`
+     : `${API_BASE_URL}/questions`
+
+    const response = await fetch(url, {
       method: 'GET',
     });
 
@@ -137,9 +156,12 @@ export async function deleteQuestion(questionId: number): Promise<void> {
 
 
 
-export async function getSubmissions(): Promise<Submission[]> {
+export async function getSubmissions(offset?: number, limit?: number): Promise<Submission[]> {
+  const url = offset && limit
+  ? `${API_BASE_URL}/submissions&offset=${offset}&limit=${limit}`
+  : `${API_BASE_URL}/submissions`
   try {
-    const response = await fetch(`${API_BASE_URL}/submissions`);
+    const response = await fetch(url);
     if (!response.ok) {
       throw new Error(`Failed to fetch submissions. Status: ${response.status}`);
     }
@@ -275,6 +297,7 @@ export async function submitAnswers(answers: Answer[]): Promise<void> {
 export const api = {
   getUser,
   getQuestions,
+  getQuestionsCount,
   addQuestion,
   updateQuestion,
   deleteQuestion,

@@ -60,7 +60,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                         />
                         <label htmlFor="email">Email address</label>
                     </div>
-
                     <div className="form-floating mb-4">
                         <input
                             type="password"

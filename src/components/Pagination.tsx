@@ -28,7 +28,7 @@ interface PaginationProps {
               <button className="page-link" onClick={() => onPageChange(i)}>{i + 1}</button>
             </li>
           ))}
-          <li className={`page-item ${currentPage === totalPages - 1 ? 'disabled' : ''}`}>
+          <li className={`page-item ${currentPage === totalPages - 1 || totalPages === 0 ?  'disabled' : ''}`}>
             <button className="page-link" onClick={handleClickNext}>Next</button>
           </li>
         </ul>

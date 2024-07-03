@@ -89,6 +89,11 @@ const TableHeaders: React.FC<TableHeadersProps> = ({ questions }) => {
 const TableBody: React.FC<TableBodyProps> = ({ questions, submissions, onDelete }) => {
   return (
     <tbody>
+       {submissions.length === 0 && (
+            <tr>
+              <td colSpan={questions.length + 3 } className="text-center">No submissions</td>
+            </tr>
+          )}
       {submissions.map((submission, index) => (
         <TableRow key={submission.id} submission={submission} questions={questions} index={index + 1} onDelete={onDelete}></TableRow>
       ))}
@@ -111,7 +116,6 @@ const TableRow: React.FC<TableRowProps> = ({ questions, submission, index, onDel
       </td>
       <td className='text-center'>{index}</td>
       <td className='text-center'>{submission.submissionTime}</td>
-      {/*Danger key!!!*/}
       {questions.map(question => (
         <AnswerCell key={question.id} answer={answers.get(question.id!)} />
       ))}

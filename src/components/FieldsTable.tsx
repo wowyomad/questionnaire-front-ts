@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Question from '../types/Question';
 import { QuestionComponent } from './QuestionComponent';
 import Pagination from './Pagination';
@@ -7,16 +7,22 @@ type QuestionsTableProps = {
   questions: Question[];
   onEdit: (id: number) => void;
   onDelete: (id: number) => void;
+  currentPage: number;
+  itemsPerPage: number;
+  totalItems: number;
+  onPageChange: (page: number) => void;
 };
 
-export const FieldsTableComponent: React.FC<QuestionsTableProps> = ({ questions, onEdit, onDelete }) => {
-  const [currentPage, setCurrentPage] = useState<number>(0);
-  const itemsPerPage = 8;
-
-  const totalPages = Math.ceil(questions.length / itemsPerPage);
-
-  const startIndex = currentPage * itemsPerPage;
-  const currentQuestions = questions.slice(startIndex, startIndex + itemsPerPage);
+export const FieldsTableComponent: React.FC<QuestionsTableProps> = ({
+  questions,
+  onEdit,
+  onDelete,
+  currentPage,
+  itemsPerPage,
+  totalItems,
+  onPageChange
+}) => {
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   return (
     <div className="container mt-4">
@@ -34,10 +40,15 @@ export const FieldsTableComponent: React.FC<QuestionsTableProps> = ({ questions,
           </tr>
         </thead>
         <tbody>
-          {currentQuestions.map((question, index) => (
+          {questions.length === 0 && (
+            <tr>
+              <td colSpan={8} className="text-center">No fields</td>
+            </tr>
+          )}
+          {questions.map((question, index) => (
             <QuestionComponent
               key={question.id}
-              index={startIndex + index}
+              index={currentPage * itemsPerPage + index}
               question={question}
               onEdit={onEdit}
               onDelete={onDelete}
@@ -45,10 +56,10 @@ export const FieldsTableComponent: React.FC<QuestionsTableProps> = ({ questions,
           ))}
         </tbody>
       </table>
-      <Pagination 
+      <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
-        onPageChange={setCurrentPage}
+        onPageChange={onPageChange}
       />
     </div>
   );
