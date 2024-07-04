@@ -12,7 +12,7 @@ import UserPasswordChange from '../types/PasswordChangeData';
 const API_BASE_URL: string = 'http://localhost:8080';
 export async function getCurrentUser(): Promise<User> {
   const id: number | undefined = persistentStorage.getUserId()
-  if(id !== undefined) {
+  if (id !== undefined) {
     return await getUser(id)
   } else {
     throw new Error('Erorr gettting current user. User not logged in?!')
@@ -179,7 +179,24 @@ export async function deleteQuestion(questionId: number): Promise<void> {
   }
 }
 
+export async function getSubmission(id: number): Promise<Submission> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/submissions/${id}`)
 
+    if(!response.ok) {
+      throw new Error(`Error fetching submission with id ${id}`)
+    }
+
+    const json = await response.json()
+
+    return json as Submission
+
+
+  } catch(error) {
+    console.error(error)
+    throw error
+  }
+}
 
 export async function getSubmissions(offset?: number, limit?: number): Promise<Submission[]> {
   const url = offset !== undefined && limit !== undefined
@@ -296,7 +313,7 @@ export async function signup(credentials: UserSignup): Promise<AuthenticationRes
   }
 }
 
-export async function submitAnswers(answers: Answer[]): Promise<void> {
+export async function submitAnswers(answers: Answer[]): Promise<Submission> {
   const submission: Submission = { answers }
   console.log(JSON.stringify(submission))
 
@@ -313,6 +330,8 @@ export async function submitAnswers(answers: Answer[]): Promise<void> {
     if (response.status !== 201) {
       throw new Error(`Submission not accepted. Status: ${response.status}`)
     }
+    const json = await response.json()
+    return json as Submission
   } catch (error) {
     console.error(`Error submitting.`, error)
     throw error;
@@ -333,7 +352,7 @@ export async function updateCurrentUser(user: User) {
     })
 
     if (response.status !== 200) {
-        throw new Error(response.status.toString())
+      throw new Error(response.status.toString())
     }
     const json = await response.json()
 
@@ -341,15 +360,15 @@ export async function updateCurrentUser(user: User) {
       throw new Error(`Invalid response format`);
     }
     return json as AuthenticationResponse;
-  
 
-  } catch(error) {
+
+  } catch (error) {
     console.error('Error updating profile', error);
     throw error
-    
+
   }
 }
-export async function updateCurrentPassword (data: UserPasswordChange) {
+export async function updateCurrentPassword(data: UserPasswordChange) {
   const id: number | undefined = persistentStorage.getUserId()
   if (id === undefined) {
     throw Error('User not logged in?!')
@@ -362,11 +381,11 @@ export async function updateCurrentPassword (data: UserPasswordChange) {
         'Content-Type': 'application/json',
       }, body: JSON.stringify(data)
     })
-    if(response.status == 500) {
+    if (response.status == 500) {
       throw new Error('Wrong password!')
     }
     if (response.status !== 200) {
-        throw new Error(response.status.toString())
+      throw new Error(response.status.toString())
     }
     const json = await response.json()
 
@@ -374,12 +393,12 @@ export async function updateCurrentPassword (data: UserPasswordChange) {
       throw new Error(`Invalid response format`);
     }
     return json as AuthenticationResponse;
-  
 
-  } catch(error) {
+
+  } catch (error) {
     console.error('Error changing password', error);
     throw error
-    
+
   }
 }
 
@@ -394,6 +413,7 @@ export const api = {
   updateQuestion,
   deleteQuestion,
   getSubmissions,
+  getSubmission,
   addSubmission,
   deleteSubmission,
   signup,

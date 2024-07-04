@@ -1,72 +1,57 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { api } from "../services/api";
 import Question from "../types/Question";
-import SubmissionForm from "../components/SubmissionForm";
-import Pagination from "../components/Pagination"; // Import Pagination component
-import { useNavigate } from "react-router-dom";
+import Answer from "../types/Answer";
+import Submission from "../types/Submission";
 
-const itemsPerPage = 8; // Number of items per page
+const SubmissionPage: React.FC = () => {
+    const { id } = useParams<{ id: string }>();
+    const [submission, setSubmission] = useState<Submission | null>(null);
+    const [questions, setQuestions] = useState<Question[]>([]);
+    const [error, setError] = useState<string>('');
 
-function SubmissionPage() {
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [filteredQuestions, setFilteredQuestions] = useState<Question[]>([]);
-  const [totalQuestions, setTotalQuestions] = useState<number>(0);
-  const [currentPage, setCurrentPage] = useState<number>(0);
-  const navigate = useNavigate();
+    useEffect(() => {
+        const fetchSubmissionDetails = async () => {
+            try {
+                const submissionId = parseInt(id!, 10);
+                const [submissionData, questionsData] = await Promise.all([
+                    api.getSubmission(submissionId),
+                    api.getQuestions(),
+                ]);
+                setSubmission(submissionData);
+                setQuestions(questionsData);
+            } catch (err: Error | any) {
+                setError((err as Error).message);
+            }
+        };
 
-  useEffect(() => {
-    fetchTotalQuestions();
-    fetchQuestions(currentPage, itemsPerPage);
-  }, [currentPage]);
+        fetchSubmissionDetails();
+    }, [id]);
 
-  useEffect(() => {
-    const filtered = questions.filter(question => question.active);
-    setFilteredQuestions(filtered);
-  }, [questions]);
-
-  const fetchQuestions = async (offset: number, limit: number) => {
-    try {
-      const data = await api.getQuestions(offset, limit);
-      setQuestions(data);
-    } catch (error) {
-      console.error('Error fetching questions:', error);
+    if (error) {
+        return <div className="text-danger">{error}</div>;
     }
-  };
 
-  const fetchTotalQuestions = async () => {
-    try {
-      const total = await api.getQuestionsCount();
-      setTotalQuestions(total);
-    } catch (error) {
-      console.error('Error fetching total questions:', error);
+    if (!submission) {
+        return <div>Loading...</div>;
     }
-  };
 
-  const onSubmit = () => {
-    sessionStorage.setItem('fromSubmission', 'true');
-    navigate('/success');
-  };
-
-  return (
-    <div className="container-sm mt-5">
-      <div className="row justify-content-center">
-        <div className="col-md-5 shadow-3-strong p-5 mb-5 rounded">
-          <h2 className="mb-4">Submission</h2>
-          {filteredQuestions.length > 0 && (
-            <SubmissionForm questions={filteredQuestions} onSubmissionSuccess={onSubmit} />
-          )}
-          <div className="mt-5">
-            <Pagination
-              currentPage={currentPage}
-              totalPages={Math.ceil(totalQuestions / itemsPerPage)}
-              onPageChange={setCurrentPage}
-            />
-          </div>
-
+    return (
+        <div className="container-sm mt-5">
+            <h2>Submission Details</h2>
+            <ul className="list-group">
+                {questions.map((question) => {
+                    const answer: Answer | undefined = submission.answers.find(a => a.questionId === question.id);
+                    return (
+                        <li key={question.id} className="list-group-item">
+                            <strong>{question.label}:</strong> {answer?.text || (answer?.selectedOptions && answer.selectedOptions.map(opt => opt.text).join(', ')) || 'N/A'}
+                        </li>
+                    );
+                })}
+            </ul>
         </div>
-      </div>
-    </div>
-  );
-}
+    );
+};
 
 export default SubmissionPage;

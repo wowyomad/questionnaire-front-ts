@@ -8,10 +8,11 @@ import Option from '../types/Option';
 import Answer from '../types/Answer';
 import { api } from '../services/api';
 import QuestionType from '../types/QuestionType';
+import Submission from '../types/Submission';
 
 interface SubmissionFormProps {
     questions: Question[];
-    onSubmissionSuccess?: () => void;
+    onSubmissionSuccess?: (submissionId: number) => void;
 }
 
 const SubmissionForm: React.FC<SubmissionFormProps> = ({ questions, onSubmissionSuccess }) => {
@@ -52,9 +53,10 @@ const SubmissionForm: React.FC<SubmissionFormProps> = ({ questions, onSubmission
                 })),
             };
 
-            await api.submitAnswers(submissionData.answers);
-
-            onSubmissionSuccess?.()
+            const submission: Submission = await api.submitAnswers(submissionData.answers);
+            console.log(JSON.stringify(submission));
+            
+            onSubmissionSuccess?.(submission.id!)
 
         } catch (error) {
             console.error("Error submitting form:", error);

@@ -6,11 +6,11 @@ import ResponsesPage from './pages/ResponsesPage';
 import FieldsPage from './pages/FieldsPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
-import SubmissionPage from './pages/SubmissionPage';
+import QuestionnairePage from './pages/QuestionnairePage';
 import persistentStorage from './services/PersitentStorage';
 import AuthenticationResponse from './types/AuthenticationResponse';
 import { api } from './services/api';
-import SuccessPage from './pages/SuccessPage';
+import SubmissionPage from './pages/SubmissionPage';
 import NotFoundPage from './pages/NotFoundPage';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -43,8 +43,8 @@ const App: React.FC = () => {
         } catch (error) {
           console.error('Failed to fetch user:', error);
         }
-      }      
-      setLoading(false); 
+      }
+      setLoading(false);
     }
     fetchUser();
   }, []);
@@ -79,7 +79,7 @@ const App: React.FC = () => {
     <>
       <Navbar bg="light" expand="lg">
         <Container>
-          <Navbar.Brand as={Link} to="/submission">
+          <Navbar.Brand as={Link} to="/questionnaire">
             <img src={logo} alt="Logo" height="64" />
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -112,11 +112,10 @@ const App: React.FC = () => {
       </Navbar>
 
       <Routes>
-        <Route index element={<SubmissionPage />} />
+        <Route index element={<QuestionnairePage />} />
         <Route path="/responses" element={<ResponsesPage />} />
-        <Route path="/submission" element={<SubmissionPage />} />
-        <Route path="/success" element={<SuccessPage />} />
-        <Route path="/signup" element={<SignupPage onSignupSuccess={onSignupSuccess} />} />
+        <Route path="/questionnaire" element={<QuestionnairePage />} />
+        <Route path="/submission/:id" element={<SubmissionPage />} />        <Route path="/signup" element={<SignupPage onSignupSuccess={onSignupSuccess} />} />
         <Route path="/login" element={<LoginPage onLoginSuccess={onLoginSuccess} />} />
         <Route path="/not-found" element={<NotFoundPage />} />
         <Route path="*" element={<NotFoundPage />} />
@@ -133,7 +132,7 @@ const App: React.FC = () => {
           path="/edit-profile"
           element={
             <ProtectedRoute isLoggedIn={isLoggedIn}>
-              <EditProfilePage onSuccess={onEditProfileSuccess}/>
+              <EditProfilePage onSuccess={onEditProfileSuccess} />
             </ProtectedRoute>
           }
         />
@@ -141,7 +140,7 @@ const App: React.FC = () => {
           path="/change-password"
           element={
             <ProtectedRoute isLoggedIn={isLoggedIn}>
-             <ChangePasswordPage onSuccess={onChangePasswordSuccess}/>
+              <ChangePasswordPage onSuccess={onChangePasswordSuccess} />
             </ProtectedRoute>
           }
         />

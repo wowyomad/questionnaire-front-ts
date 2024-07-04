@@ -98,7 +98,7 @@ const ResponsesPage: React.FC = () => {
   const handleDelete = async (id: number) => {
     try {
       await deleteSubmission(id);
-      handleSubmissionsUpdated(); // Refresh the data after deletion
+      handleSubmissionsUpdated();
     } catch (error) {
       console.error('Error deleting submission:', error);
     }
