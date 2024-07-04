@@ -56,7 +56,7 @@ const App: React.FC = () => {
     setEmail(() => '');
     persistentStorage.removeToken();
     persistentStorage.removeUserId();
-    navigate('/submission')
+    navigate('/')
   };
 
   const onLoginSuccess = async (auth: AuthenticationResponse) => {
@@ -67,7 +67,7 @@ const App: React.FC = () => {
     setEmail(user.email);
     setLoggedIn(true);
 
-    navigate('/submission');
+    navigate('/');
   };
   const onSignupSuccess = onLoginSuccess;
   const onEditProfileSuccess = onLoginSuccess;

@@ -21,7 +21,7 @@ const ResponsesPage: React.FC = () => {
   useEffect(() => {
     webSocketService.connect();
     webSocketService.subscribe('/topic/submissionsUpdated', handleSubmissionsUpdated);
-    webSocketService.subscribe('/topic/questionsUpdated', handleQuestinosUpdated)
+   // webSocketService.subscribe('/topic/questionsUpdated', handleQuestinosUpdated)
     return () => {
       webSocketService.unsubscribe('/topic/submissionsUpdated');
     };
