@@ -17,6 +17,51 @@ interface SubmissionFormProps {
 const SubmissionForm: React.FC<SubmissionFormProps> = ({ questions, onSubmissionSuccess }) => {
     const [formData, setFormData] = useState<{ [key: number]: Answer }>({});
 
+    const handleReset = () => {
+        const confirmReset = window.confirm('Are you sure you want to reset your answers?');
+        if (confirmReset) {
+            setFormData({});
+        } 
+    };
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        if (!validateForm()) {
+            alert('Please answer all required questions.');
+            return;
+        }
+
+        const confirmSubmit = window.confirm('Are you sure you want to submit your answers?');
+        if (!confirmSubmit) {
+            return;
+        }
+
+        try {
+            const filteredQuestions = questions.filter((question) => {
+                const answer = formData[question.id!];
+                return typeof answer?.text === 'string' || (Array.isArray(answer?.selectedOptions) && answer?.selectedOptions.length > 0);
+            });
+
+            const submissionData = {
+                answers: filteredQuestions.map((question) => ({
+                    questionId: question.id!,
+                    questionType: question.type,
+                    text: formData[question.id!]?.text || null,
+                    selectedOptions: formData[question.id!]?.selectedOptions || null,
+                })),
+            };
+
+            await api.submitAnswers(submissionData.answers);
+
+            onSubmissionSuccess?.()
+
+        } catch (error) {
+            console.error("Error submitting form:", error);
+            alert('Failed to submit answers');
+        }
+    };
+
     const handleInputChange = (questionId: number, value: string) => {
         setFormData((prevData) => ({
             ...prevData,
@@ -72,38 +117,7 @@ const SubmissionForm: React.FC<SubmissionFormProps> = ({ questions, onSubmission
         }));
     };
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
-        if (!validateForm()) {
-            alert('Please answer all required questions.');
-            return;
-        }
-
-        try {
-            const filteredQuestions = questions.filter((question) => {
-                const answer = formData[question.id!];
-                return typeof answer?.text === 'string' || (Array.isArray(answer?.selectedOptions) && answer?.selectedOptions.length > 0);
-            });
-
-            const submissionData = {
-                answers: filteredQuestions.map((question) => ({
-                    questionId: question.id!,
-                    questionType: question.type,
-                    text: formData[question.id!]?.text || null,
-                    selectedOptions: formData[question.id!]?.selectedOptions || null,
-                })),
-            };
-
-            await api.submitAnswers(submissionData.answers);
-
-            onSubmissionSuccess?.()
-
-        } catch (error) {
-            console.error("Error submitting form:", error);
-            alert('Failed to submit answers');
-        }
-    };
+    
 
     const validateForm = (): boolean => {
         for (const question of questions) {
@@ -230,7 +244,11 @@ const SubmissionForm: React.FC<SubmissionFormProps> = ({ questions, onSubmission
                     )}
                 </div>
             ))}
-            <button type="submit" className="btn btn-primary">Submit Response</button>
+            <div className="d-flex justify-content-between">
+                <button type="button" className="btn btn-sm btn-danger" onClick={handleReset}>Reset Answers</button>
+                <button type="submit" className="btn btn-lg btn-primary">Submit Response</button>
+            </div>
+
         </form>
     );
 };

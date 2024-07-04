@@ -15,6 +15,8 @@ import NotFoundPage from './pages/NotFoundPage';
 import ProtectedRoute from './components/ProtectedRoute';
 
 import './App.css'
+import EditProfilePage from './pages/EditProfilePage';
+import ResetPasswordPage from './pages/ChangePassword';
 
 const App: React.FC = () => {
   const [isLoggedIn, setLoggedIn] = useState<boolean>(false);
@@ -128,7 +130,7 @@ const App: React.FC = () => {
           path="/edit-profile"
           element={
             <ProtectedRoute isLoggedIn={isLoggedIn}>
-              <div>Edit Profile Private Route</div>
+              <EditProfilePage/>
             </ProtectedRoute>
           }
         />
@@ -136,7 +138,7 @@ const App: React.FC = () => {
           path="/reset-password"
           element={
             <ProtectedRoute isLoggedIn={isLoggedIn}>
-              <div>Reset Password Private Route</div>
+             <ResetPasswordPage/>
             </ProtectedRoute>
           }
         />
