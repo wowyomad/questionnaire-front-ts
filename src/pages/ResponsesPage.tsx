@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import ResponsesTable from '../components/ResponsesTable';
-import { getQuestions, getSubmissions, deleteSubmission, api } from '../services/api'; 
-import Question from '../types/Question'; 
+import { getQuestions, getSubmissions, deleteSubmission, api } from '../services/api';
+import Question from '../types/Question';
 import Submission from '../types/Submission';
 import WebSocketService from '../services/WebsocketService';
 
@@ -20,15 +20,24 @@ const ResponsesPage: React.FC = () => {
 
   useEffect(() => {
     webSocketService.connect();
-    webSocketService.subscribe('/topic/questionsUpdated', handleQuestionsUpdated);
+    webSocketService.subscribe('/topic/submissionsUpdated', handleSubmissionsUpdated);
+    webSocketService.subscribe('/topic/questionsUpdated', handleQuestinosUpdated)
     return () => {
-      webSocketService.unsubscribe('/topic/questionsUpdated');
+      webSocketService.unsubscribe('/topic/submissionsUpdated');
     };
   }, [currentPage]);
 
-  const handleQuestionsUpdated = async () => {
+  const handleQuestinosUpdated = async () => {
+    console.info('Got a message of new questions');
+    await fetchQuestions();
+  }
+
+
+  const handleSubmissionsUpdated = async () => {
+    console.info('Got a message of new submission');
+
     let page: number = currentPage;
-    const count = await api.getSubmissionsCount(); 
+    const count = await api.getSubmissionsCount();
     setTotalSubmissions(count);
 
     if (count !== totalSubmissions) {
@@ -89,7 +98,7 @@ const ResponsesPage: React.FC = () => {
   const handleDelete = async (id: number) => {
     try {
       await deleteSubmission(id);
-      handleQuestionsUpdated(); // Refresh the data after deletion
+      handleSubmissionsUpdated(); // Refresh the data after deletion
     } catch (error) {
       console.error('Error deleting submission:', error);
     }
