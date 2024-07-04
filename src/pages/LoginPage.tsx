@@ -78,13 +78,13 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                             <div className="form-check">
                                 <input className="form-check-input" type="checkbox" value="" id="remember" defaultChecked />
                                 <label className="form-check-label" htmlFor="remember">
-                                    Remember me
+                                    Remember me (not functional)
                                 </label>
                             </div>
                         </div>
 
                         <div className="col">
-                            <a href="#!">Forgot password?</a>
+                            <a href="#!">Forgot password? (not functional)</a>
                         </div>
                     </div>
                     <div className="d-flex justify-content-center mb-4">

@@ -16,7 +16,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 import './App.css'
 import EditProfilePage from './pages/EditProfilePage';
-import ResetPasswordPage from './pages/ChangePassword';
+import ResetPasswordPage from './pages/ChangePasswordPage';
+import ChangePasswordPage from './pages/ChangePasswordPage';
 
 const App: React.FC = () => {
   const [isLoggedIn, setLoggedIn] = useState<boolean>(false);
@@ -69,6 +70,8 @@ const App: React.FC = () => {
     navigate('/submission');
   };
   const onSignupSuccess = onLoginSuccess;
+  const onEditProfileSuccess = onLoginSuccess;
+  const onChangePasswordSuccess = onLoginSuccess;
 
   if (isLoading) return <div>Loading...</div>;
 
@@ -95,7 +98,7 @@ const App: React.FC = () => {
                   onMouseLeave={hideDropdown}
                 >
                   <Dropdown.Item as={Link} to="/edit-profile">Edit Profile</Dropdown.Item>
-                  <Dropdown.Item as={Link} to="/reset-password">Reset Password</Dropdown.Item>
+                  <Dropdown.Item as={Link} to="/change-password">Change Password</Dropdown.Item>
                   <Dropdown.Item onClick={handleLogout} className="btn btn-outline-danger">Logout</Dropdown.Item>
                 </DropdownButton>
               ) : (
@@ -130,15 +133,15 @@ const App: React.FC = () => {
           path="/edit-profile"
           element={
             <ProtectedRoute isLoggedIn={isLoggedIn}>
-              <EditProfilePage/>
+              <EditProfilePage onSuccess={onEditProfileSuccess}/>
             </ProtectedRoute>
           }
         />
         <Route
-          path="/reset-password"
+          path="/change-password"
           element={
             <ProtectedRoute isLoggedIn={isLoggedIn}>
-             <ResetPasswordPage/>
+             <ChangePasswordPage onSuccess={onChangePasswordSuccess}/>
             </ProtectedRoute>
           }
         />

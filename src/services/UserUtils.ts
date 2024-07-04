@@ -1,4 +1,4 @@
-import User from "../types/UserProfile";
+import User from "../types/User";
 
 export namespace UserUtils {
     export function setUser(user: User) {

@@ -3,12 +3,21 @@ import AuthenticationResponse from '../types/AuthenticationResponse';
 import Question from '../types/Question';
 import Submission from '../types/Submission';
 import UserLogin from '../types/UserLogin';
-import User from '../types/UserProfile';
+import User from '../types/User';
 import UserSignup from '../types/UserSignup';
 import persistentStorage from './PersitentStorage';
+import UserPasswordChange from '../types/PasswordChangeData';
 
 
 const API_BASE_URL: string = 'http://localhost:8080';
+export async function getCurrentUser(): Promise<User> {
+  const id: number | undefined = persistentStorage.getUserId()
+  if(id !== undefined) {
+    return await getUser(id)
+  } else {
+    throw new Error('Erorr gettting current user. User not logged in?!')
+  }
+}
 
 export async function getUser(userId: number): Promise<User> {
   console.log('awaiting get user')
@@ -46,7 +55,7 @@ export async function getSubmissionsCount(): Promise<number> {
     const count: number = await response.json()
     return count
 
-  } catch(error) {
+  } catch (error) {
     console.error('Error fetching submissions count:', error);
     throw error;
   }
@@ -61,7 +70,7 @@ export async function getQuestionsCount(): Promise<number> {
     const count: number = await response.json()
     return count
 
-  } catch(error) {
+  } catch (error) {
     console.error('Error fetching questions count:', error);
     throw error;
   }
@@ -70,8 +79,8 @@ export async function getQuestionsCount(): Promise<number> {
 export async function getQuestions(offset?: number, limit?: number): Promise<Question[]> {
   try {
     const url = offset !== undefined && limit !== undefined
-     ? `${API_BASE_URL}/questions?offset=${offset}&limit=${limit}`
-     : `${API_BASE_URL}/questions`
+      ? `${API_BASE_URL}/questions?offset=${offset}&limit=${limit}`
+      : `${API_BASE_URL}/questions`
 
     const response = await fetch(url, {
       method: 'GET',
@@ -174,10 +183,10 @@ export async function deleteQuestion(questionId: number): Promise<void> {
 
 export async function getSubmissions(offset?: number, limit?: number): Promise<Submission[]> {
   const url = offset !== undefined && limit !== undefined
-  ? `${API_BASE_URL}/submissions?offset=${offset}&limit=${limit}`
-  : `${API_BASE_URL}/submissions`
+    ? `${API_BASE_URL}/submissions?offset=${offset}&limit=${limit}`
+    : `${API_BASE_URL}/submissions`
   console.log(url);
-  
+
   try {
     const response = await fetch(url);
     if (!response.ok) {
@@ -301,8 +310,8 @@ export async function submitAnswers(answers: Answer[]): Promise<void> {
       body: JSON.stringify(submission)
     }
     )
-    if(response.status !== 201) {
-        throw new Error (`Submission not accepted. Status: ${response.status}`)
+    if (response.status !== 201) {
+      throw new Error(`Submission not accepted. Status: ${response.status}`)
     }
   } catch (error) {
     console.error(`Error submitting.`, error)
@@ -310,9 +319,73 @@ export async function submitAnswers(answers: Answer[]): Promise<void> {
   }
 }
 
+export async function updateCurrentUser(user: User) {
+  const id: number | undefined = persistentStorage.getUserId()
+  if (id === undefined) {
+    throw Error('User not logged in?!')
+  }
+  try {
+    const response = await fetch(`${API_BASE_URL}/users/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      }, body: JSON.stringify(user)
+    })
+
+    if (response.status !== 200) {
+        throw new Error(response.status.toString())
+    }
+    const json = await response.json()
+
+    if (!json.token || !json.userId) {
+      throw new Error(`Invalid response format`);
+    }
+    return json as AuthenticationResponse;
+  
+
+  } catch(error) {
+    console.error('Error updating profile', error);
+    throw error
+    
+  }
+}
+export async function updateCurrentPassword (data: UserPasswordChange) {
+  const id: number | undefined = persistentStorage.getUserId()
+  if (id === undefined) {
+    throw Error('User not logged in?!')
+  }
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/users/${id}/reset-password`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      }, body: JSON.stringify(data)
+    })
+    if(response.status == 500) {
+      throw new Error('Wrong password!')
+    }
+    if (response.status !== 200) {
+        throw new Error(response.status.toString())
+    }
+    const json = await response.json()
+
+    if (!json.token || !json.userId) {
+      throw new Error(`Invalid response format`);
+    }
+    return json as AuthenticationResponse;
+  
+
+  } catch(error) {
+    console.error('Error changing password', error);
+    throw error
+    
+  }
+}
 
 
 export const api = {
+  getCurrentUser,
   getUser,
   getQuestions,
   getQuestionsCount,
@@ -325,5 +398,7 @@ export const api = {
   deleteSubmission,
   signup,
   login,
-  submitAnswers
+  submitAnswers,
+  updateCurrentUser,
+  updateCurrentPassword
 };
