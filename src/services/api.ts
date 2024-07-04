@@ -173,7 +173,7 @@ export async function deleteQuestion(questionId: number): Promise<void> {
 
 
 export async function getSubmissions(offset?: number, limit?: number): Promise<Submission[]> {
-  const url = offset && limit
+  const url = offset !== undefined && limit !== undefined
   ? `${API_BASE_URL}/submissions?offset=${offset}&limit=${limit}`
   : `${API_BASE_URL}/submissions`
   console.log(url);
